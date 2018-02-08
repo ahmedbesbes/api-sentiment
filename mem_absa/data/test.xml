@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Reviews>
+    <Review rid="g147328-d1953698-r268823910">
+        <sentences>
+            <sentence id="g147328-d1953698-r268823910:0">
+                <text>Si vous êtes en vacances, si vous avez –beaucoup- de temps à perdre tout en regardant les serveuses et serveurs (au demeurant charmants) virevolter comme des mouches ne sachant quoi faire ni pour qui faire (1 heure pour 3 côtelettes froides, et, le lendemain, ¾ d’heures pour 3 glaces jamais arrivées… !), longue attente accompagnée par une musique horripilante (boum tchic, boum tchic, sans cesse).</text>
+                <Opinions>
+                    <Opinion target="serveuses" category="SERVICE#GENERAL" polarity="negative" from="90" to="99"/>
+                    <Opinion target="musique" category="AMBIENCE#GENERAL" polarity="negative" from="341" to="348"/>
+                    <Opinion target="attente" category="SERVICE#GENERAL" polarity="negative" from="313" to="320"/>
+                    <Opinion target="côtelettes" category="FOOD#QUALITY" polarity="negative" from="222" to="232"/>
+                    <Opinion target="serveurs" category="SERVICE#GENERAL" polarity="negative" from="103" to="111"/>
+                </Opinions>
+            </sentence>
+        </sentences>
+    </Review>
+</Reviews>

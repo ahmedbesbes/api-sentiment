@@ -1,0 +1,17 @@
+version: 1.0.0 beta
+host: 0.0.0.0
+port: 9090
+url_prefix: api-sentiment-1
+log:
+  level_values:
+    CRITICAL: 50
+    ERROR: 40
+    WARNING: 30
+    INFO: 20
+    DEBUG: 10
+    commentaire: Valeurs utilisables pour le level
+  level: INFO
+  dir: "/tmp"
+  filename: api-sentiment.log
+  max_filesize: 50000000
+  max_files: 5
