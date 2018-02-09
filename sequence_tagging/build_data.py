@@ -1,8 +1,9 @@
 from sequence_tagging.config_seq import Config
 from sequence_tagging.model.data_utils import CoNLLDataset, get_vocabs, UNK, NUM, \
-    get_fasttext_vocab, write_vocab, load_vocab, get_char_vocab, \
+     write_vocab, load_vocab, get_char_vocab, \
     export_trimmed_fasttext_vectors, get_processing_word
-
+#import spacy
+#fr_nlp= spacy.load("fr")
 
 def main():
     """Procedure to build data

@@ -5,11 +5,11 @@ from collections import Counter
 import re
 import string
 from pyfasttext import FastText
-import spacy
 import numpy as np
 
-fr_nlp=spacy.load("fr")
+
 path='/Users/nkooli/Documents/docs/avis/review_analysis_pj/mem_absa'
+
 wiki_model=FastText()
 wiki_model.load_model(path+'/model_pyfasttext100.bin')
 
@@ -76,7 +76,7 @@ def _get_data_raw(sptoks, asp_term, from_idx, to_idx, word2idx):
 
     return pos_info
 
-def read_vocabulary(fname, source_count, source_word2idx):
+def read_vocabulary(fr_nlp,fname, source_count, source_word2idx):
     if os.path.isfile(fname) == False:
         raise ("[!] Data %s not found" % fname)
 
@@ -124,7 +124,7 @@ def read_vocabulary(fname, source_count, source_word2idx):
     return max_sent_len
 
 
-def read_vocabRaw(fname, source_count, source_word2idx):
+def read_vocabRaw(fr_nlp,fname, source_count, source_word2idx):
     if os.path.isfile(fname) == False:
         raise ("[!] Data %s not found" % fname)
     source_words, target_words, max_sent_len=[], [], 0
@@ -156,8 +156,8 @@ def read_vocabRaw(fname, source_count, source_word2idx):
     return max_sent_len
 
 
-def read_data(fname, source_count, source_word2idx):
-    max_sent_len=read_vocabulary(fname, source_count, source_word2idx)
+def read_data(fr_nlp,fname, source_count, source_word2idx):
+    max_sent_len=read_vocabulary(fr_nlp,fname, source_count, source_word2idx)
     if os.path.isfile(fname) == False:
         raise ("[!] Data %s not found" % fname)
 
@@ -202,8 +202,8 @@ def read_data(fname, source_count, source_word2idx):
 
     return source_data, source_loc_data, target_data, target_label, max_sent_len
 
-def read_raw(fname, source_count, source_word2idx):
-    max_sent_len=read_vocabRaw(fname, source_count, source_word2idx)
+def read_raw(fr_nlp,fname, source_count, source_word2idx):
+    max_sent_len=read_vocabRaw(fr_nlp,fname, source_count, source_word2idx)
     if os.path.isfile(fname) == False:
         raise ("[!] Data %s not found" % fname)
 
@@ -251,7 +251,7 @@ def read_raw(fname, source_count, source_word2idx):
 
     return source_data, source_loc_data, target_data, target_label, max_sent_len
 
-def read_sample(text, aspect_words, source_count, source_word2idx):
+def read_sample(fr_nlp,text, aspect_words, source_count, source_word2idx):
     # source_data : set of word indexes
     # source_loc_data : context word distances to aspect word
     # target_data : aspect word index
@@ -308,8 +308,6 @@ def read_sample(text, aspect_words, source_count, source_word2idx):
         source_loc_data.append(pos_info)
         target_data.append([source_word2idx[sp.text.lower().strip()] for sp in t_sptoks])
         target_label.append(lab)
-        # target_label=[0,0,0]
-    #print("Read %s aspects from %s" % (len(source_data), text))
 
     # souce_data : set of word indexes
     # source_loc_data : context word distances to aspect word
@@ -321,21 +319,11 @@ def read_sample(text, aspect_words, source_count, source_word2idx):
 # Fasttext embedding
 def init_word_embeddings(word2idx, nwords):
     wt=[]
-    f=open("./word_embedding_100.txt", "w")
     for w in word2idx:
-        # print(w)
         # remove accents
         w=supprime_accent(w)
-        # remove punctuation
-       # w=re.sub('[' + string.punctuation + ']', '', w)
-        f.write(w + " ")
-        liste=np.array(wiki_model[w])
-        for val in liste:
-            f.write(str(round(val, 5))+" ")
-        f.write("\n")
         wt.append(np.array(wiki_model[w]))
     if nwords - len(word2idx) > 0:
-        #print("Warning : redefine nwords !! ")
         for i in range(nwords - len(word2idx)):
             wt.append(np.array(wiki_model['']))
     return np.array(wt)

@@ -1,8 +1,7 @@
-
-
+path="./"
 filename_reviews="./data/reviews.txt"
-filename_aspects= "./data/aspects.txt"
-filename_csv= "./data/sentiment_review.csv"
+filename_aspects="./data/aspects.txt"
+filename_csv="./data/sentiment_review.csv"
 
 model_mem='./mem_absa/models/test_model'
 
