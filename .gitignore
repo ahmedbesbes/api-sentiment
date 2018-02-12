@@ -26,7 +26,6 @@ var/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-# Unit test / coverage reports
 htmlcov/
 .tox/
 .coverage
@@ -34,7 +33,6 @@ htmlcov/
 nosetests.xml
 coverage.xml
 # Translations
-*.mo
 *.pot
 # Django stuff:
 *.log
@@ -50,7 +48,15 @@ swallow
 .idea/
 nohup.out
 .DS_Store
-_weight*
-model*
-*weights*
+events*
 _*
+*/data
+.idea/
+__pycache__/
+glove.6B.300d.txt
+*sh
+*pyc
+/data
+!/data/.gitkeep
+*.DS_Store
+events*
