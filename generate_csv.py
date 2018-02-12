@@ -98,7 +98,8 @@ def main():
             if len(aspects) > 0:
                 aspect_words=np.array(aspects)[:, 0]
                 aspect_categories=np.array(aspects)[:, 1]
-                test_data=read_sample(fr_nlp, review, aspect_words, source_count, source_word2idx)
+                aspect_idx=np.array(aspects)[:, 2]
+                test_data=read_sample(fr_nlp, review, aspect_words, aspect_idx, source_count, source_word2idx)
                 FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model, source_word2idx, FLAGS.nbwords)
                 FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
 

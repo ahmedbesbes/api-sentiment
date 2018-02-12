@@ -247,7 +247,7 @@ def read_raw(fr_nlp,fname, source_count, source_word2idx):
 
     return source_data, source_loc_data, target_data, target_label, max_sent_len
 
-def read_sample(fr_nlp,text, aspect_words, source_count, source_word2idx):
+def read_sample(fr_nlp,text, aspect_words,aspect_idx, source_count, source_word2idx):
     # source_data : set of word indexes
     # source_loc_data : context word distances to aspect word
     # target_data : aspect word index
@@ -279,13 +279,14 @@ def read_sample(fr_nlp,text, aspect_words, source_count, source_word2idx):
     idx=[]
     for sptok in sptoks:
         idx.append(source_word2idx[sptok.text.lower().strip()])
-    for aspect_word in aspect_words:
+    for aspect_word,from_idx in zip(aspect_words,aspect_idx):
         t_sptoks=fr_nlp(str(aspect_word))
         source_data.append(idx)
 
         # calculate pos info ...
-        from_idx=text.find(str(aspect_word))
+        from_idx=int(from_idx)
         to_idx=from_idx + len(aspect_word)
+        #print(from_idx," ",to_idx)
         # list of aspect words
         aspect_is=[]
         for sptok in sptoks:

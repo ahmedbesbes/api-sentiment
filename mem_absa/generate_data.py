@@ -6,23 +6,31 @@ import tensorflow as tf
 import pickle
 import numpy as np
 import re
-from mem_absa.config_mem import FLAGS,pp,flags
 from mem_absa.load_data import init_word_embeddings
 from mem_absa.load_data import read_sample, read_vocabulary
 from mem_absa.mapping import mapping_sentiments
 from mem_absa.model import MemN2N
+from mem_absa.config_mem import Configure
 
+import spacy
+fr_nlp=spacy.load("fr")
+path=".."
+configure=Configure()
+FLAGS=configure.get_flags(path)
+
+from pyfasttext import FastText
+wiki_model=FastText()
+wiki_model.load_model(FLAGS.pathFasttext)
 
 def main(_):
-
-    pp.pprint(flags.FLAGS.__flags)
+    configure.pp.pprint(FLAGS.__flags)
     source_count=[]
     source_word2idx={}
 
-    read_vocabulary(FLAGS.train_data, source_count, source_word2idx)
+    read_vocabulary(fr_nlp,FLAGS.train_data, source_count, source_word2idx)
 
     print('loading pre-trained word vectors...')
-    FLAGS.pre_trained_context_wt=init_word_embeddings(source_word2idx, FLAGS.nwords)
+    FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
     FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
 
 
@@ -32,7 +40,7 @@ def main(_):
 
 
     print('Loading Model...')
-    ckpt=tf.train.get_checkpoint_state('./models/test_model')
+    ckpt=tf.train.get_checkpoint_state(FLAGS.pathModel)
     saver.restore(model.sess, ckpt.model_checkpoint_path)
     print("Model loaded")
 
@@ -50,8 +58,9 @@ def main(_):
         if len(aspects_) > 0:
             aspect_words=np.array(aspects_)[:, 0]
             aspect_categories=np.array(aspects_)[:, 1]
-            test_data=read_sample(review, aspect_words, source_count, source_word2idx)
-            FLAGS.pre_trained_context_wt=init_word_embeddings(source_word2idx, FLAGS.nwords)
+            aspect_idx=np.array(aspects_)[:, 2]
+            test_data=read_sample(fr_nlp,review, aspect_words,aspect_idx, source_count, source_word2idx)
+            FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
             FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
 
             predictions=model.predict(test_data, source_word2idx)

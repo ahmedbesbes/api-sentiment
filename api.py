@@ -15,6 +15,7 @@ from sentiment_analysis import load_sentiment_model, load_tagging_model, sentime
 
 import spacy
 from pyfasttext import FastText
+
 # fr dictionary loading
 fr_nlp=spacy.load("fr")
 
@@ -54,7 +55,7 @@ def _init_app(p_conf):
 
 app, swagger_api, ns=_init_app(conf)
 model_tag=load_tagging_model()
-model_sa, flags, source_count, source_word2idx=load_sentiment_model(fr_nlp,wiki_model)
+model_sa, flags, source_count, source_word2idx=load_sentiment_model(fr_nlp, wiki_model)
 
 
 # Access log query interceptor
@@ -114,10 +115,11 @@ class aspectsentiment(Resource):
 
         logger.info("Analyse de {sentence}".format(sentence=sentence))
 
-        opinions, summury=sentiment_analysis(model_tag, model_sa,flags, source_count, source_word2idx, sentence, fr_nlp,wiki_model)
+        opinions, summury=sentiment_analysis(model_tag, model_sa, flags, source_count, source_word2idx, sentence,
+                                             fr_nlp, wiki_model)
 
         response={
-            'aspects': [{'target': opinion[0], 'category': opinion[1], 'sentiment': opinion[2], 'exemple': opinion[3]}
+            'aspects': [{'target': opinion[0], 'category': opinion[1], 'from':opinion[2], 'to':opinion[3],'sentiment': opinion[4], 'exemple': opinion[5]}
                         for opinion in opinions],
             'summury': [{'category': sum[0], 'sentiment': sum[1]} for sum in summury],
 

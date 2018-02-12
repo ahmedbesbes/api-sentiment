@@ -43,7 +43,7 @@ def main():
 
         if words_raw == ["exit"]: break
 
-        # select randomly one review from Pages Jaunes database
+        # select randomly one review from PagesJaunes database
         if words_raw == ["select"]:
             # connexion BD
             cursor=conn.cursor()

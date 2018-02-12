@@ -10,17 +10,10 @@ class Configure():
         # path='..'
         flags=tf.app.flags
         self.FLAGS=flags.FLAGS
-        # flags.DEFINE_string("pretrain_file", path+"/mem_absa/data/glove.6B.300d.txt", "pre-trained glove vectors file path ["+path+"/mem_absa/data/glove.6B.300d.txt]")
-        # flags.DEFINE_string("pretrain_file", path+"/mem_absa/data/model.bin", "pre-trained glove vectors file path ["+path+"/mem_absa/data/model.bin]")
-
-        #flags.DEFINE_string("train_data", path + "/mem_absa/data/Restaurants_Train-fr.xml",
-        #                         "train gold data set path [" + path + "/mem_absa/data/Restaurants_Train-fr.xml]")
 
         self.FLAGS.test_data=path + "/mem_absa/data/Restaurants_Gold-fr.xml"
-        # flags.DEFINE_string("test_data", path+"/mem_absa/data/Museums_Gold-fr.xml",
-        #                    "test gold data set path ["+path+"/mem_absa/data/Museums_Gold-fr.xml]")
-        # flags.DEFINE_string("test_data", path+"/data/pj_sent.raw",
-        #                    "test gold data set path ["+path+"/data/pj_sent.raw]")
+        # self.FLAGS.test_data=path+"/mem_absa/data/Museums_Gold-fr.xml"
+        # self.FLAGS.test_data=path+"/data/pj_sent.raw"
 
         self.FLAGS.test_samples=path + "/sequence_tagging/data/reviews.txt"
 
@@ -28,7 +21,7 @@ class Configure():
 
         # flags.DEFINE_string("test_data", "data/Museums_gold-fr.xml", "test gold data set path [./data/Museums_gold-fr.xml]")
 
-        #self.FLAGS.pathFasttext=path + "/data/model_pyfasttext100.bin"
+        # self.FLAGS.pathFasttext=path + "/data/model_pyfasttext100.bin"
 
         self.FLAGS.pathModel=path + "/mem_absa/models/test_model"
 
@@ -39,7 +32,6 @@ class Configure():
         self.FLAGS.load_samples=False
 
         self.FLAGS.txt_file=True
-
 
         # FLAGS.pad_idx = source_word2idx['<pad>']
         self.FLAGS.train_data=path + "/mem_absa/data/Restaurants_Train-fr.xml"
@@ -69,4 +61,6 @@ class Configure():
 
         self.FLAGS.mem_size=500
         # print("FLAGS.mem_size : ",FLAGS.mem_size)
+
+        self.FLAGS.pathFasttext='../data/model_pyfasttext100.bin'
         return self.FLAGS

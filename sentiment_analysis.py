@@ -56,7 +56,7 @@ def millis(start_time):
     return ms
 
 
-def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx, sentence, fr_nlp,wiki_model):
+def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx, sentence, fr_nlp, wiki_model):
     start_time=datetime.now()
     sentence_nlp=fr_nlp(sentence)
     words_raw=[]
@@ -66,7 +66,7 @@ def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx,
     #print("word processing spacy :", interval1)
 
     preds, aspects=model_tag.predict(words_raw)
-    to_print=align_data({"input": words_raw, "output": preds})
+    #to_print=align_data({"input": words_raw, "output": preds})
     #for key, seq in to_print.items():
     #    model_tag.config.logger.info(seq)
 
@@ -80,8 +80,9 @@ def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx,
         # model_sa, source_count, source_word2idx=load_sentiment_model()
         aspect_words=np.array(aspects)[:, 0]
         aspect_categories=np.array(aspects)[:, 1]
+        aspect_idx=np.array(aspects)[:, 2]
 
-        test_data=read_sample(fr_nlp, sentence, aspect_words, source_count, source_word2idx)
+        test_data=read_sample(fr_nlp, sentence, aspect_words,aspect_idx, source_count, source_word2idx)
         #interval31=millis(start_time)
         #print("31 :", (interval31 - interval2))
 
@@ -101,13 +102,13 @@ def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx,
         #print("sentiment analysis :", (interval4 - interval3))
 
 
-        for asp, cat, pred in zip(aspect_words, aspect_categories, predictions):
+        for asp, cat, idx, pred in zip(aspect_words, aspect_categories,aspect_idx, predictions):
             print(asp, " : ", str(cat), " =>", mapping_sentiments(pred), end=" ; exemple : ")
             sample=[s.strip() for s in re.split('[\.\?!,;:]', sentence) if
                     re.sub(' ', '', asp.lower()) in re.sub(' ', '', s.lower())][0]
             print(sample)
             samples[str(cat) + '_' + str(pred)]=sample
-            opinion=[asp, str(cat), mapping_sentiments(pred), sample]
+            opinion=[asp, str(cat), str(idx),str(int(idx)+len(asp)), mapping_sentiments(pred), sample]
             opinions.append(opinion)
 
         # summary review
