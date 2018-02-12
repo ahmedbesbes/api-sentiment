@@ -41,7 +41,7 @@ def interactive_shell(model):
         model: instance of NERModel
 
     """
-    model.logger.info("""
+    model.config.logger.info("""
 This is an interactive mode.
 To exit, enter 'exit'.
 You can enter a review like
@@ -64,28 +64,28 @@ input> Accueil chaleureux mais prix cher""")
         to_print = align_data({"input": words_raw, "output": preds})
 
         for key, seq in to_print.items():
-            model.logger.info(seq)
+            model.config.logger.info(seq)
 
 
 def main():
     # create instance of config
-    config = Config()
-
+    config=Config()
+    FLAGS=config.get_flags(".")
     # build model
-    model = NERModel(config)
+    model = NERModel(config,FLAGS)
     model.build()
-    model.restore_session(config.dir_model)
+    model.restore_session(FLAGS.dir_model)
 
     # create dataset
-    test  = CoNLLDataset(config.filename_test, config.processing_word,
-                         config.processing_tag, config.max_iter)
+    test  = CoNLLDataset(FLAGS.filename_test, config.processing_word,
+                         config.processing_tag, FLAGS.max_iter)
 
     # evaluate and interact
 
-    results=model.evaluate_file(config.filename_samples,config.filename_aspects,fr_nlp)
+    results=model.evaluate_file(FLAGS.filename_samples,FLAGS.filename_aspects,fr_nlp)
 
     model.evaluate(test)
-    model.print_results(test,config.filename_results)
+    model.print_results(test,FLAGS.filename_results)
     interactive_shell(model)
 
 

@@ -14,8 +14,12 @@ import configuration as confi
 from sentiment_analysis import load_sentiment_model, load_tagging_model, sentiment_analysis
 
 import spacy
-
+from pyfasttext import FastText
+# fr dictionary loading
 fr_nlp=spacy.load("fr")
+
+wiki_model=FastText()
+wiki_model.load_model(confi.pathFasttext)
 
 import traceback
 
@@ -50,7 +54,7 @@ def _init_app(p_conf):
 
 app, swagger_api, ns=_init_app(conf)
 model_tag=load_tagging_model()
-model_sa, source_count, source_word2idx=load_sentiment_model(fr_nlp)
+model_sa, flags, source_count, source_word2idx=load_sentiment_model(fr_nlp,wiki_model)
 
 
 # Access log query interceptor
@@ -101,7 +105,6 @@ doc_parser2.add_argument(name='avis', required=True, type=str, help="Le texte d'
 class aspectsentiment(Resource):
     @staticmethod
     def get():
-        print(confi.path)
 
         try:
             sentence=request.args.get('avis', None)
@@ -111,7 +114,7 @@ class aspectsentiment(Resource):
 
         logger.info("Analyse de {sentence}".format(sentence=sentence))
 
-        opinions, summury=sentiment_analysis(model_tag, model_sa, source_count, source_word2idx, sentence, fr_nlp)
+        opinions, summury=sentiment_analysis(model_tag, model_sa,flags, source_count, source_word2idx, sentence, fr_nlp,wiki_model)
 
         response={
             'aspects': [{'target': opinion[0], 'category': opinion[1], 'sentiment': opinion[2], 'exemple': opinion[3]}

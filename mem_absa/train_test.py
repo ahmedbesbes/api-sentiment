@@ -1,24 +1,32 @@
 
 import tensorflow as tf
-from mem_absa.config_mem import FLAGS,pp,flags
+from mem_absa.config_mem import Configure
 from mem_absa.load_data import read_data, init_word_embeddings, read_raw
 from mem_absa.load_data import read_vocabulary
 from mem_absa.model import MemN2N
 
+
 import spacy
 fr_nlp=spacy.load("fr")
+path=".."
+configure=Configure()
+FLAGS=configure.get_flags(path)
+
+from pyfasttext import FastText
+wiki_model=FastText()
+wiki_model.load_model(FLAGS.pathFasttext)
 
 def main(_):
 
-    pp.pprint(flags.FLAGS.__flags)
+    configure.pp.pprint(FLAGS.__flags)
     source_count=[]
     source_word2idx={}
-    max_sent_length=read_vocabulary(fr_nlp,FLAGS.train_data, source_count, source_word2idx)
+    max_sent_length=read_vocabulary(fr_nlp, FLAGS.train_data, source_count, source_word2idx)
     print(max_sent_length)
 
 
     print('loading pre-trained word vectors...')
-    FLAGS.pre_trained_context_wt=init_word_embeddings(source_word2idx, FLAGS.nwords)
+    FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
     # pad idx has to be 0
     FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
     # FLAGS.pre_trained_target_wt = init_word_embeddings(target_word2idx)
@@ -32,7 +40,7 @@ def main(_):
     if FLAGS.load_model:
         print('Loading Model...')
 
-        ckpt=tf.train.get_checkpoint_state('./models/test_model')
+        ckpt=tf.train.get_checkpoint_state(FLAGS.pathModel)
         saver.restore(model.sess, ckpt.model_checkpoint_path)
         print("Model loaded")
 
@@ -47,7 +55,7 @@ def main(_):
 
 
         #read_sample
-        FLAGS.pre_trained_context_wt=init_word_embeddings(source_word2idx, FLAGS.nwords)
+        FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
         FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
         #model.predict(test_data, source_word2idx)
         test_loss, test_acc=model.test(test_data, source_word2idx,True)
@@ -64,7 +72,7 @@ def main(_):
             test_data=read_raw(fr_nlp,FLAGS.test_data, source_count, source_word2idx)
 
 
-        FLAGS.pre_trained_context_wt=init_word_embeddings(source_word2idx, FLAGS.nwords)
+        FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
         FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
 
         model.sess.run(model.A.assign(model.pre_trained_context_wt))
@@ -83,7 +91,7 @@ def main(_):
             # save the best model
             if max_train < train_acc:
                 max_train=train_acc
-                saver.save(model.sess, './models/test_model/model')
+                saver.save(model.sess, FLAGS.pathModel+'/model')
 
 
 if __name__ == '__main__':

@@ -7,9 +7,9 @@ import pickle
 import numpy as np
 import re
 from mem_absa.config_mem import FLAGS,pp,flags
-from mem_absa.load_data import read_data, init_word_embeddings
+from mem_absa.load_data import init_word_embeddings
 from mem_absa.load_data import read_sample, read_vocabulary
-from mem_absa.mapping import mapping_categories,mapping_sentiments
+from mem_absa.mapping import mapping_sentiments
 from mem_absa.model import MemN2N
 
 

@@ -2,16 +2,12 @@ import os
 import pdb
 import xml.etree.ElementTree as ET
 from collections import Counter
-import re
 import string
 from pyfasttext import FastText
 import numpy as np
 
 
-path='/Users/nkooli/Documents/docs/avis/review_analysis_pj/mem_absa'
 
-wiki_model=FastText()
-wiki_model.load_model(path+'/model_pyfasttext100.bin')
 
 
 def standardization(item):
@@ -317,12 +313,13 @@ def read_sample(fr_nlp,text, aspect_words, source_count, source_word2idx):
     return source_data, source_loc_data, target_data, target_label, max_sent_len
 
 # Fasttext embedding
-def init_word_embeddings(word2idx, nwords):
+def init_word_embeddings(wiki_model,word2idx, nwords):
     wt=[]
     for w in word2idx:
         # remove accents
         w=supprime_accent(w)
         wt.append(np.array(wiki_model[w]))
+
     if nwords - len(word2idx) > 0:
         for i in range(nwords - len(word2idx)):
             wt.append(np.array(wiki_model['']))
