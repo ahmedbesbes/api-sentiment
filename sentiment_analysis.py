@@ -56,60 +56,77 @@ def millis(start_time):
     return ms
 
 
-def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx, sentence, fr_nlp, wiki_model):
-    start_time=datetime.now()
-    sentence_nlp=fr_nlp(sentence)
-    words_raw=[]
-    words_raw.extend([sp.text for sp in sentence_nlp])
+def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx, review, fr_nlp, wiki_model):
+    #start_time=datetime.now()
 
-    #interval1=millis(start_time)
-    #print("word processing spacy :", interval1)
-
-    preds, aspects=model_tag.predict(words_raw)
-    #to_print=align_data({"input": words_raw, "output": preds})
-    #for key, seq in to_print.items():
-    #    model_tag.config.logger.info(seq)
-
-    #interval2=millis(start_time)
-    #print("aspect extraction :", (interval2 - interval1))
 
     samples={}
     opinions=[]
     summury=[]
-    if len(aspects) > 0:
-        # model_sa, source_count, source_word2idx=load_sentiment_model()
-        aspect_words=np.array(aspects)[:, 0]
-        aspect_categories=np.array(aspects)[:, 1]
-        aspect_idx=np.array(aspects)[:, 2]
 
-        test_data=read_sample(fr_nlp, sentence, aspect_words,aspect_idx, source_count, source_word2idx)
-        #interval31=millis(start_time)
-        #print("31 :", (interval31 - interval2))
+    all_aspect_words, all_aspect_categories, all_predictions=[],[],[]
 
-        FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
-        #interval32=millis(start_time)
-        #print("init 32 :", (interval32 - interval31))
+    #sentences=review.split(".?!")
+    sentences=re.split('\.+|\!|\?', review)
+    for sentence in sentences:
+        sentence_nlp=fr_nlp(sentence)
+        words_raw=[]
+        words_raw.extend([sp.text for sp in sentence_nlp])
 
-        FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
-        #interval33=millis(start_time)
-        #print("33 :", (interval33 - interval32))
+        #interval1=millis(start_time)
+        #print("word processing spacy :", interval1)
 
-        #interval3=millis(start_time)
-        #print("embedding & indexation :", (interval3 - interval2))
-        predictions=model_sa.predict(test_data, source_word2idx)
+        preds, aspects=model_tag.predict(words_raw)
+        #to_print=align_data({"input": words_raw, "output": preds})
+        #for key, seq in to_print.items():
+        #    model_tag.config.logger.info(seq)
 
-        #interval4=millis(start_time)
-        #print("sentiment analysis :", (interval4 - interval3))
+        #interval2=millis(start_time)
+        #print("aspect extraction :", (interval2 - interval1))
 
 
-        for asp, cat, idx, pred in zip(aspect_words, aspect_categories,aspect_idx, predictions):
-            print(asp, " : ", str(cat), " =>", mapping_sentiments(pred), end=" ; exemple : ")
-            sample=[s.strip() for s in re.split('[\.\?!,;:]', sentence) if
-                    re.sub(' ', '', asp.lower()) in re.sub(' ', '', s.lower())][0]
-            print(sample)
-            samples[str(cat) + '_' + str(pred)]=sample
-            opinion=[asp, str(cat), str(idx),str(int(idx)+len(asp)), mapping_sentiments(pred), sample]
-            opinions.append(opinion)
+        if len(aspects) > 0:
+            # model_sa, source_count, source_word2idx=load_sentiment_model()
+            aspect_words=np.array(aspects)[:, 0]
+            aspect_categories=np.array(aspects)[:, 1]
+            aspect_idx=np.array(aspects)[:, 2]
+
+            all_aspect_words.extend(aspect_words)
+            all_aspect_categories.extend(aspect_categories)
+
+
+
+
+            test_data=read_sample(fr_nlp, sentence, aspect_words,aspect_idx, source_count, source_word2idx)
+            #interval31=millis(start_time)
+            #print("31 :", (interval31 - interval2))
+
+            FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
+            #interval32=millis(start_time)
+            #print("init 32 :", (interval32 - interval31))
+
+            FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
+            #interval33=millis(start_time)
+            #print("33 :", (interval33 - interval32))
+
+            #interval3=millis(start_time)
+            #print("embedding & indexation :", (interval3 - interval2))
+            predictions=model_sa.predict(test_data, source_word2idx)
+
+            #interval4=millis(start_time)
+            #print("sentiment analysis :", (interval4 - interval3))
+            all_predictions.extend(predictions)
+
+            for asp, cat, idx, pred in zip(aspect_words, aspect_categories,aspect_idx, predictions):
+                print(asp, " : ", str(cat), " =>", mapping_sentiments(pred), end=" ; exemple : ")
+                sample=[s.strip() for s in re.split('[\.\?!,;:]', sentence) if
+                        re.sub(' ', '', asp.lower()) in re.sub(' ', '', s.lower())][0]
+                print(sample)
+                samples[str(cat) + '_' + str(pred)]=sample
+                opinion=[asp, str(cat), str(idx),str(int(idx)+len(asp)), mapping_sentiments(pred), sample]
+                opinions.append(opinion)
+
+    if len(all_aspect_words)>0:
 
         # summary review
         print("\n------SUMMARY REVIEW-------")
@@ -118,7 +135,7 @@ def sentiment_analysis(model_tag, model_sa, FLAGS,source_count, source_word2idx,
             exists=False
             total=0
             val=0
-            for asp, cat, pred in zip(aspect_words, aspect_categories, predictions):
+            for asp, cat, pred in zip(all_aspect_words, all_aspect_categories, all_predictions):
 
                 if str(cat) == categ:
                     exists=True
