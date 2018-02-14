@@ -254,7 +254,7 @@ def read_sample(fr_nlp,text, aspect_words,aspect_idx, source_count, source_word2
     # target_label : sentiment GT
     source_words, target_words, max_sent_len=[], [], 0
 
-    sptoks=fr_nlp(text)
+    sptoks=fr_nlp(text.strip())
     source_words.extend([sp.text.lower().strip() for sp in sptoks])
     if len(sptoks) > max_sent_len:
         max_sent_len=len(sptoks)
@@ -286,10 +286,12 @@ def read_sample(fr_nlp,text, aspect_words,aspect_idx, source_count, source_word2
         # calculate pos info ...
         from_idx=int(from_idx)
         to_idx=from_idx + len(aspect_word)
-        #print(from_idx," ",to_idx)
+     #   print(aspect_word," ",from_idx," ",to_idx)
         # list of aspect words
         aspect_is=[]
         for sptok in sptoks:
+            #print(sptok.text)
+      #      print("--------",sptok.text,"",sptok.idx, " ", sptok.idx+len(sptok.text))
             # if sptok.idx >= from_idx and sptok.idx + len(sptok.text) <= to_idx:
             if sptok.idx < to_idx and sptok.idx + len(sptok.text) > from_idx:  # as long as it has intersection
                 aspect_is.append(sptok.i)

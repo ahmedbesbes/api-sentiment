@@ -59,13 +59,14 @@ def main(_):
             aspect_words=np.array(aspects_)[:, 0]
             aspect_categories=np.array(aspects_)[:, 1]
             aspect_idx=np.array(aspects_)[:, 2]
+            print(aspect_words,aspect_categories,aspect_idx)
             test_data=read_sample(fr_nlp,review, aspect_words,aspect_idx, source_count, source_word2idx)
             FLAGS.pre_trained_context_wt=init_word_embeddings(wiki_model,source_word2idx, FLAGS.nbwords)
             FLAGS.pre_trained_context_wt[FLAGS.pad_idx, :]=0
 
             predictions=model.predict(test_data, source_word2idx)
             samples={}
-            for asp, cat, pred in zip(aspect_words, aspect_categories, predictions):
+            for asp, cat, idx, pred in zip(aspect_words, aspect_categories, aspect_idx, predictions):
                 print(asp, " : ", str(cat), " =>", mapping_sentiments(pred),end=" ; ")
                 sample=[s.strip() for s in re.split('[\.\?!,;:]', review) if
                         re.sub(' ', '', asp.lower()) in re.sub(' ', '', s.lower())][0]

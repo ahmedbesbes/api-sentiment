@@ -10,3 +10,6 @@ filename_pj_sentiments="./data/sent_pj.txt"
 
 
 pathFasttext='./data/model_pyfasttext100.bin'
+
+filename_proreviews='./data/reviews_7680844.txt'
+filename_procsv='./data/sentiment_reviews_7680844.csv'

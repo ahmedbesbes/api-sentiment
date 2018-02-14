@@ -22,7 +22,7 @@ def mapping_categories(tok):
     try:
         categ=translate[tok]
     except:
-        print("category mapping : pas de conversion pour {}".format(phrase))
+        print("category mapping : pas de conversion pour {}".format(tok))
     return categ
 
 

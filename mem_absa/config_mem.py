@@ -27,7 +27,7 @@ class Configure():
 
         self.FLAGS.show=False
 
-        self.FLAGS.load_model=False
+        self.FLAGS.load_model=True
 
         self.FLAGS.load_samples=False
 

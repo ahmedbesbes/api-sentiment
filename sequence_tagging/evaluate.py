@@ -82,7 +82,7 @@ def main():
 
     # evaluate and interact
 
-    #results=model.evaluate_file(FLAGS.filename_samples,FLAGS.filename_aspects,fr_nlp)
+    results=model.evaluate_file(FLAGS.filename_samples,FLAGS.filename_aspects,fr_nlp)
 
     model.evaluate(test)
     model.print_results(test,FLAGS.filename_results)

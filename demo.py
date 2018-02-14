@@ -52,6 +52,7 @@ def main():
             cursor.execute("select comment from avis where code_an8='54053000'  order by RAND() limit 1")
             comment=cursor.fetchall()
             sentence=comment[0][0]
+            print(sentence)
             sentence_nlp=fr_nlp(sentence)
             words_raw=[]
             words_raw.extend([sp.text for sp in sentence_nlp])
