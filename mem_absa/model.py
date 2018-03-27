@@ -40,9 +40,9 @@ class MemN2N(object):
         self.current_lr=config.init_lr
         self.loss=None
         self.optim=None
-        #if sess:
+        # if sess:
         #    self.sess=sess
-        #else:
+        # else:
         self.sess=tf.Session()
         self.log_loss=[]
         self.log_perp=[]
@@ -95,6 +95,8 @@ class MemN2N(object):
             g_2dim=tf.reshape(g, [-1, self.mem_size])
             P=tf.nn.softmax(g_2dim)
 
+            #P=tf.Print(P, [P], "Print Attention For Batch- n", summarize=self.batch_size)
+
             probs3dim=tf.reshape(P, [-1, 1, self.mem_size])
             Bout=tf.matmul(probs3dim, Bin)
             Bout2dim=tf.reshape(Bout, [-1, self.edim])
@@ -141,7 +143,7 @@ class MemN2N(object):
         logs_path='/tmp/tensorflow_logs/example/'
         self.summary_writer=tf.summary.FileWriter(logs_path, self.sess.graph)
 
-    def restore_session(self,tf1, dir_model):
+    def restore_session(self, tf1, dir_model):
         """Reload weights into session
 
         Args:
@@ -151,12 +153,13 @@ class MemN2N(object):
         """
         saver=tf1.train.Saver(tf1.trainable_variables())
         ckpt=tf1.train.get_checkpoint_state(dir_model)
-        saver.restore(self.sess,ckpt.model_checkpoint_path)
+        saver.restore(self.sess, ckpt.model_checkpoint_path)
 
-        #self.logger.info("Reloading the latest trained model...")
-        #self.saver.restore(self.sess, dir_model)
+        # self.logger.info("Reloading the latest trained model...")
+        # self.saver.restore(self.sess, dir_model)
 
     def train(self, data, source_word2idx):
+
         source_data, source_loc_data, target_data, target_label, _=data
         N=int(math.floor(len(source_data) / self.batch_size))
         cost=0
@@ -217,10 +220,10 @@ class MemN2N(object):
             cost+=np.sum(loss)
 
         if self.show: bar.finish()
-        _, train_acc=self.test(data, source_word2idx,False)  # todo: bring me back
+        _, train_acc=self.test(data, source_word2idx, False)  # todo: bring me back
         return cost / N / self.batch_size, train_acc
 
-    def test(self, data, source_word2idx,pprint):
+    def test(self, data, source_word2idx, pprint):
         source_data, source_loc_data, target_data, target_label, _=data
         # print(source_data)
         N=int(math.ceil(len(source_data) / self.batch_size))
@@ -289,8 +292,8 @@ class MemN2N(object):
                                 if v == x[b][k]:
                                     print(c, end=' ')
 
-                    print('==> ',mapping_sentiments(predictions[b]), end=' ')
-                #print(raw_labels[b]," " ,predictions[b])
+                    print('==> ', mapping_sentiments(predictions[b]), end=' ')
+                # print(raw_labels[b]," " ,predictions[b])
                 if raw_labels[b] == predictions[b]:
                     acc=acc + 1
                     if pprint:
@@ -376,7 +379,7 @@ class MemN2N(object):
         # save_path = saver.save(self.sess, "./models/model.ckpt", global_step=idx)
         # print("Model saved in file: %s" % save_path)
 
-        test_loss, test_acc=self.test(test_data, source_word2idx,False)
+        test_loss, test_acc=self.test(test_data, source_word2idx, False)
         print('test-loss=%.2f;test-acc=%.2f' % (test_loss, test_acc))
 
 # saver.save(self.sess, './models/model')

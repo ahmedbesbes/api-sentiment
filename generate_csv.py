@@ -22,16 +22,16 @@ wiki_model.load_model(configuration.pathFasttext)
 conn=mysql.connector.connect(host="localhost", user="root", password="root", database="resolution")
 
 
-def generate_review_data(file):
+def generate_review_data():
     cursor=conn.cursor()
-    cursor.execute("select distinct code_etab from resolution.avis where code_an8=54053000")
+    cursor.execute("select distinct code_etab from resolution.contributions_etab_nihel where code_an8=54053000 limit 300")
     etabs=cursor.fetchall()
     data=[]
     # with open(file, "w") as f:
 
     for etab in etabs:
         etab_vect=[]
-        cursor.execute("SELECT id_contrib,comment,note_globale FROM resolution.avis "
+        cursor.execute("SELECT id_contrib,comment,note_globale FROM resolution.contributions_etab_nihel "
                        "where code_an8=54053000 and code_etab='" + str(etab[0]) + "' limit 3")
         etab_reviews=cursor.fetchall()
 
@@ -53,7 +53,7 @@ def main():
     model_tag=load_tagging_model()
     model_sa, FLAGS, source_count, source_word2idx=load_sentiment_model(fr_nlp, wiki_model)
 
-    profs=generate_review_data(configuration.filename_reviews)
+    profs=generate_review_data()
 
     # with open(configuration.filename_reviews, "r") as f:
     #    reviews=[]
@@ -62,21 +62,20 @@ def main():
 
     # with open(configuration.filename_aspects, 'rb') as fp:
     #    aspects=pickle.load(fp)
-    print("start")
     csv_file=open(configuration.filename_csv, 'w')
-    csv_file.write("code_etab;id_contrib;comment;note_globale;"
+    csv_file.write("code_etab;id_contrib;comment_1;note_globale_1;"
                    "sentiment_SERVICE_1;target_SERVICE_1;sample_SERVICE_1;"
                    "sentiment_AMBIANCE_1;target_AMBIANCE_1;sample_AMBIANCE_1;"
                    "sentiment_QUALITY_1;target_QUALITY_1;sample_QUALITY_1;"
                    "sentiment_PRICE_1;target_PRICE_1;sample_PRICE_1;"
                    "sentiment_GENERAL_1;target_GENERAL_1;sample_GENERAL_1;"
-                   "sentiment_LOCATION_1;target_LOCATION_1;sample_LOCATION_1;"
+                   "sentiment_LOCATION_1;target_LOCATION_1;sample_LOCATION_1;comment_2;note_globale_2;"
                    "sentiment_SERVICE_2;target_SERVICE_2;sample_SERVICE_2;"
                    "sentiment_AMBIANCE_2;target_AMBIANCE_2;sample_AMBIANCE_2;"
                    "sentiment_QUALITY_2;target_QUALITY_2;sample_QUALITY_2;"
                    "sentiment_PRICE_2;target_PRICE_2;sample_PRICE_2;"
                    "sentiment_GENERAL_2;target_GENERAL_2;sample_GENERAL_2;"
-                   "sentiment_LOCATION_2;target_LOCATION_2;sample_LOCATION_2;"
+                   "sentiment_LOCATION_2;target_LOCATION_2;sample_LOCATION_2;comment_3;note_globale_3;"
                    "sentiment_SERVICE_3;target_SERVICE_3;sample_SERVICE_3;"
                    "sentiment_AMBIANCE_3;target_AMBIANCE_3;sample_AMBIANCE_3;"
                    "sentiment_QUALITY_3;target_QUALITY_3;sample_QUALITY_3;"
@@ -89,15 +88,15 @@ def main():
 
     # k=0
     for prof in profs:
-        csv_file.write(
-            str(prof[0][0]) + ";" + str(prof[0][1]) + ";\"" + re.sub('\"', '&quot', prof[0][2]) + "\"" + ";" + str(
-                prof[0][3]) + "")
+        csv_file.write(str(prof[0][0]) + ";" + str(prof[0][1]))
         tab_sent=[0, 0, 0, 0, 0, 0]
         tab_sum=[0, 0, 0, 0, 0, 0]
-        all_aspect_words, all_aspect_categories, all_predictions=[], [], []
-        samples={}
+
         for i in range(len(prof)):
+            all_aspect_words, all_aspect_categories, all_predictions=[], [], []
+            samples={}
             # for review, aspects_,rev in zip(reviews, aspects,data):
+            csv_file.write(";\"" + str(re.sub('\"', '&quot', prof[i][2]) + "\"" + ";" + str(prof[0][3])))
             review=prof[i][2]
             review=review.strip()
             sentences=re.split('\.+|\!|\?', review)
@@ -131,36 +130,37 @@ def main():
                         # print(sample)
                         samples[str(cat) + '_' + str(pred)]=sample
 
-        # summary review
-        # print("\n------SUMMARY REVIEW-------")
-        if len(all_aspect_words) > 0:
-            categories=['SERVICE', 'AMBIANCE', 'QUALITE', 'PRIX', 'GENERAL', 'LOCALISATION']
-            j=0
-            for categ in categories:
-                asp_cat=""
-                exists=False
-                total=0
-                val=0
-                for asp, cat, pred in zip(all_aspect_words, all_aspect_categories, all_predictions):
-                    if str(cat) == categ:
-                        exists=True
-                        total+=1
-                        val+=pred
-                        asp_cat+=asp + ", "
-                if exists:
-                    tab_sent[j]+=round(val / total)
-                    tab_sum[j]+=1
-                    csv_file.write(";\"" + mapping_sentiments(round(val / total)) + "\";\"" + asp_cat[0:-2] + "\";\"")
-                    # print(categ, " ", mapping_sentiments(round(val / total)), "exemple : ")
-                    try:
-                        csv_file.write(samples[categ + '_' + str(int(round(val / total)))] + "\"")
-                    # print(samples[categ + '_' + str(int(round(val / total)))])
-                    except:
-                        csv_file.write("\"conflict\"")
-                        print("conflict")
-                else:
-                    csv_file.write(";\"-\";\"-\"")
-                j+=1
+            # summary review
+            # print("\n------SUMMARY REVIEW-------")
+            if len(all_aspect_words) > 0:
+                categories=['SERVICE', 'AMBIANCE', 'QUALITE', 'PRIX', 'GENERAL', 'LOCALISATION']
+                j=0
+                for categ in categories:
+                    asp_cat=""
+                    exists=False
+                    total=0
+                    val=0
+                    for asp, cat, pred in zip(all_aspect_words, all_aspect_categories, all_predictions):
+                        if str(cat) == categ:
+                            exists=True
+                            total+=1
+                            val+=pred
+                            asp_cat+=asp + ", "
+                    if exists:
+                        tab_sent[j]+=round(val / total)
+                        tab_sum[j]+=1
+                        csv_file.write(
+                            ";\"" + mapping_sentiments(round(val / total)) + "\";\"" + asp_cat[0:-2] + "\";\"")
+                        # print(categ, " ", mapping_sentiments(round(val / total)), "exemple : ")
+                        try:
+                            csv_file.write(samples[categ + '_' + str(int(round(val / total)))] + "\"")
+                        # print(samples[categ + '_' + str(int(round(val / total)))])
+                        except:
+                            csv_file.write("\"conflict\"")
+                            print("conflict")
+                    else:
+                        csv_file.write(";\"-\";\"-\";\"-\"")
+                    j+=1
             else:
                 csv_file.write(";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-"
                                "\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\";\"-\"")

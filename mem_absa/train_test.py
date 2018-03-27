@@ -76,6 +76,7 @@ def main(_):
         model.sess.run(model.B.assign(model.pre_trained_context_wt))
         model.sess.run(model.ASP.assign(model.pre_trained_context_wt))
 
+
         max_train=0
         for idx in range(FLAGS.nepoch):
             print('epoch ' + str(idx) + '...')

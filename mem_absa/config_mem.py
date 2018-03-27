@@ -40,7 +40,7 @@ class Configure():
 
         self.FLAGS.lindim=75
 
-        self.FLAGS.nhop=7
+        self.FLAGS.nhop=5
 
         self.FLAGS.batch_size=128
 

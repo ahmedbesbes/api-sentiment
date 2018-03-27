@@ -45,6 +45,16 @@
             </sentence>
         </sentences>
     </Review>
+    <Review rid="g1079435-d3498474-r271346275">
+        <sentences>
+            <sentence id="g1079435-d3498474-r271346275:2">
+                <text>Le prix est cher</text>
+                <Opinions>
+                    <Opinion target="prix" category="RESTAURANT#PRICES" polarity="negative" from="3" to="7"/>
+                </Opinions>
+            </sentence>
+        </sentences>
+    </Review>
         <Review rid="g1079435-d3498474-r271346275">
         <sentences>
             <sentence id="g1079435-d3498474-r271346276:9">
@@ -175,6 +185,16 @@
             <sentence id="g1080574-d1337519-r211045323:5" OutOfScope="TRUE">
                 <text>Il vaut encore mieux aller au Mc Do !</text>
                 <Opinions/>
+            </sentence>
+        </sentences>
+    </Review>
+    <Review rid="g1079435-d3498474-r271346275">
+        <sentences>
+            <sentence id="g1079435-d3498474-r271346275:2">
+                <text>prix est très cher</text>
+                <Opinions>
+                    <Opinion target="prix" category="RESTAURANT#PRICES" polarity="negative" from="0" to="4"/>
+                </Opinions>
             </sentence>
         </sentences>
     </Review>

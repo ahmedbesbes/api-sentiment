@@ -286,14 +286,15 @@ def read_sample(fr_nlp,text, aspect_words,aspect_idx, source_count, source_word2
         # calculate pos info ...
         from_idx=int(from_idx)
         to_idx=from_idx + len(aspect_word)
-     #   print(aspect_word," ",from_idx," ",to_idx)
+        print("==>",aspect_word," ",from_idx," ",to_idx)
         # list of aspect words
         aspect_is=[]
         for sptok in sptoks:
-            #print(sptok.text)
-      #      print("--------",sptok.text,"",sptok.idx, " ", sptok.idx+len(sptok.text))
+
             # if sptok.idx >= from_idx and sptok.idx + len(sptok.text) <= to_idx:
             if sptok.idx < to_idx and sptok.idx + len(sptok.text) > from_idx:  # as long as it has intersection
+                print(sptok.text)
+                print("--------", sptok.text, "", sptok.idx, " ", sptok.idx + len(sptok.text))
                 aspect_is.append(sptok.i)
 
         assert aspect_is, pdb.set_trace()
