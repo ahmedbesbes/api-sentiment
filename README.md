@@ -6,7 +6,7 @@ consists of extracting and classifying aspect targets in the review
 - Sentiment analysis
 consists of assigning a tonality (negative, neutral, positive) to each extracted aspect target
 
-##Install and api launching
+## Install and api launching
 ```
 pip install -r requirements.txt
 python api.py
@@ -32,7 +32,7 @@ python sequence_tagging/train.py
 python sequence_tagging/evaluate.py
 ```
 
-##Sentiment analysis
+## Sentiment analysis
 
 Train/test a model according to the config in `mem_absa/config_mem.py`
 ```
