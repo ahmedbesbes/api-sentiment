@@ -107,6 +107,7 @@ def sentiment_analysis(model_tag, model_sa, FLAGS, source_count, source_word2idx
 
             # interval3=millis(start_time)
             # print("embedding & indexation :", (interval3 - interval2))
+
             predictions=model_sa.predict(test_data, source_word2idx)
 
             # interval4=millis(start_time)

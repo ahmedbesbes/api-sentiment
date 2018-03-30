@@ -340,7 +340,6 @@ class NERModel(BaseModel):
             results: list of chunks and their tags
 
         """
-
         ####bloc récupération résultats
         results=[]
         preds=[]
@@ -348,10 +347,14 @@ class NERModel(BaseModel):
         if len(words)>0:
             if type(words[0]) == tuple:
                 words=zip(*words)
+
+
             pred_ids, _=self.predict_batch([words])
+
             preds=[self.idx_to_tag[idx] for idx in list(pred_ids[0])]
 
             chunks=get_chunks(list(pred_ids[0]), self.config.vocab_tags)
+
             for chunk in chunks:
                 aspect=""
                 idx=0
@@ -363,4 +366,5 @@ class NERModel(BaseModel):
                 #print(aspect.strip(), chunk[0])
                 results.append([aspect.strip(), chunk[0],idx])
             #print(results)
+
         return preds, results
